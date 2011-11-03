@@ -24,11 +24,11 @@ $(function() {
 	// by default we let tinymce check, 
 	// if "submit" is pressed this flag this to false
 	var docheck = true; 
-
 	
 	// tinyMCE check if content has changed
 	var TinyMCE_change = function(ed) {
-	    if(ed.isDirty && docheck) {
+		
+	    if(ed.isDirty() && docheck) {
 	        // the data changed 
 	        addCheck(); 
 	    }
@@ -64,7 +64,12 @@ $(function() {
 	
 	// modify PW's JS config data for each TinyMCE instance
 	$(".InputfieldTinyMCE textarea").each(function() {
-	    config[this.id].onchange_callback = TinyMCE_change;
+		config[this.id].onchange_callback = "TinyMCE_change";
+		config[this.id].execommand_callback = "TinyMCE_change";
+	});
+	
+	$(".InputfieldMyTinyMCE textarea").each(function() {
+		config[this.id].onchange_callback = TinyMCE_change;
 		config[this.id].execommand_callback = TinyMCE_change;
 	});
 	
