@@ -59,13 +59,14 @@ $(function() {
 
 	// for sortables we check jquery ui sortable event sortupdate
 	$('.ui-sortable').live("sortupdate", function(){
+		console.log("check sortable");
 		addCheck();
 	});
 	
 	// modify PW's JS config data for each TinyMCE instance
 	$(".InputfieldTinyMCE textarea").each(function() {
-		config[this.id].onchange_callback = "TinyMCE_change";
-		config[this.id].execommand_callback = "TinyMCE_change";
+		config[this.id].onchange_callback = TinyMCE_change;
+		config[this.id].execommand_callback = TinyMCE_change;
 	});
 	
 	$(".InputfieldMyTinyMCE textarea").each(function() {

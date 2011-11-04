@@ -44,7 +44,7 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 		// when editing templates, fields, users, roles, permissions, module edit 
 		if( $this->onTemplate || !isset($this->onTemplate) ){
 			if(strpos($requrl, $this->config->urls->admin . 'template/edit?id=')){
-				$this->addHookAfter('Process::execute',$this ,'execute');
+				$this->addHookAfter('Process::executeEdit',$this ,'executeTemplate');
 			}
 		}
 		if( $this->onField || !isset($this->onField) ){
@@ -69,6 +69,11 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 	public function execute(HookEvent $event){
 		$src = "<script type='text/javascript' src='{$this->config->urls->FormSaveReminder}FormSaveReminder.js'></script>";
 		$event->return = str_replace("JqueryCore.js'></script>","JqueryCore.js'></script>\n\t$src",$event->return);
+	}
+	
+	public function executeTemplate(HookEvent $event){
+		$this->config->scripts->add($this->config->urls->FormSaveReminder . "FormSaveReminder.js");
+		
 	}
 	
 	public static function getModuleConfigInputfields(array $data) {
