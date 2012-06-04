@@ -69,7 +69,7 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 	
 	public function execute(HookEvent $event){
 		$src = "<script type='text/javascript' src='{$this->config->urls->FormSaveReminder}FormSaveReminder.js'></script>";
-		$event->return = str_replace("<script type='text/javascript' src='/wire/modules/Jquery/JqueryUI/","$src"."\n\t<script type='text/javascript' src='/wire/modules/Jquery/JqueryUI/",$event->return);
+		$event->return = str_replace("<script type='text/javascript' src='{$this->config->urls->root}wire/modules/Jquery/JqueryUI/","$src"."\n\t<script type='text/javascript' src='{$this->config->urls->root}wire/modules/Jquery/JqueryUI/",$event->return);
 	}
 	
 	public function executeTemplate(HookEvent $event){
