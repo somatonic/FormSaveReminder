@@ -1,5 +1,5 @@
-FormSaveReminder 1.0 by somatonic
-A custom module for ProcessWire2.1.
+FormSaveReminder 1.0.1 by somatonic
+A custom module for ProcessWire2.+
 
 
 How to install:
