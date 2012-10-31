@@ -2,10 +2,9 @@
 
 /**
  *
- * ProcessWire2.* Module
  * Form Save Reminder
  *
- * @author Philipp 'Soma' Urlich / philipp@urlich.ch
+ * @author Philipp 'Soma' Urlich / philipp at urlich.ch
  * @created 2011/09/09
  *
  * last modified 2012/10/31
@@ -28,7 +27,7 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 			'title' 	=> 'Form Save Reminder',
 			'version' 	=> 102,
 			'summary' 	=> 'This module adds a confirm dialog before leaving a page if its content has changed. Prevents losing unsaved data by accident.',
-			'href' 		=> 'http://processwire.com/talk/index.php/topic,473.0.html',
+			'href' 		=> 'http://modules.processwire.com/modules/form-save-reminder/',
 			'singular' 	=> true,
 			'autoload' 	=> true,
 			);
@@ -36,6 +35,7 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 
 	public function init(){
 		$requrl = $_SERVER['REQUEST_URI'];
+
 		// when editing a page
 		if( $this->onPage || !isset($this->onPage) ){
 			if(strpos($requrl, $this->config->urls->admin . 'page/edit/?id=') !== FALSE) {
@@ -67,12 +67,20 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 		}
 	}
 
+	/**
+	 * Hook function to inject script needed to perform the task
+	 * @param  HookEvent $event event object variable
+	 */
 	public function execute(HookEvent $event){
 		$conf = $this->getModuleInfo();
 	    $this->config->scripts->add($this->config->urls->FormSaveReminder . "FormSaveReminder.js?v={$conf['version']}");
-
 	}
 
+	/**
+	 * build module configuration fields
+	 * @param  array  $data module config array
+	 * @return fieldwrapper	fieldwrapper object
+	 */
 	public static function getModuleConfigInputfields(array $data) {
 
 		$fields = new InputfieldWrapper();
