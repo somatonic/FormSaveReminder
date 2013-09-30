@@ -1,6 +1,6 @@
 /**
  *
- * FormSaveReminder 1.0.2
+ * FormSaveReminder
  *
  * @author Philipp 'Soma' Urlich philipp@urlich.ch
  * @created  2011/09/09
@@ -49,7 +49,7 @@ $(function() {
 	*/
 
 	// exclude the save submit buttons from the check
-	$('button[type="submit"],input[type="submit"]').addClass('noWarn');
+	$('button[type="submit"],input[type="submit"],button[id="submit_delete"]').addClass('noWarn');
 
 	// add one time event on all form elements
    	$('input,textarea,select', 'form ul.Inputfields').one('change',function() {
