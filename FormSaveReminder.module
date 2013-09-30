@@ -27,7 +27,7 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 			'title' 	=> 'Form Save Reminder',
 			'version' 	=> 103,
 			'summary' 	=> 'This module adds a confirm dialog before leaving a page if its content has changed. Prevents losing unsaved data by accident.',
-			'href' 		=> 'http://modules.processwire.com/modules/form-save-reminder/',
+			'href' 		=> 'http://processwire.com/talk/topic/453-formsavereminder/',
 			'singular' 	=> true,
 			'autoload' 	=> true,
 			);
