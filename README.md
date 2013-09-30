@@ -1,4 +1,4 @@
-# ProcessWire FormSaveReminder 1.0.2
+# ProcessWire FormSaveReminder 1.0.3
 
 This module adds a confirm dialog before leaving a page if its content has changed. Prevents losing unsaved data by accident. It does add this feature to all edit screens in the admin backend by default.
 
