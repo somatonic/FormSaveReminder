@@ -20,65 +20,118 @@
 
 $(function() {
 
-	// by default we let tinymce check,
-	// if "submit" is pressed this flag this to false
-	var docheck = true;
+    var FormSaveReminder_docheck = true;
+    var FormSaveReminder_message = config.FormSaveReminder.message;
 
-	// tinyMCE check if content has changed
-	var TinyMCE_change = function(ed) {
 
-	    if(ed.isDirty() && docheck) {
-	        // the data changed
-	        addCheck();
-	    }
-	};
 
-	var addCheck = function (){
-		window.onbeforeunload = function() {
-			return 'Leaving this page will cause any unsaved data to be lost.';
-		}
-	};
+    // functions to add and remove the check , so we can toggle in case
+    // of submit button click tinymce alters content so check would trigger
+    // an unwanted alert
 
-	var removeCheck = function (){
-		window.onbeforeunload = null;
-	};
+    var FormSaveReminderAddCheck = function (){
+        window.onbeforeunload = function() {
+            return FormSaveReminder_message;
+        }
+    };
 
-	/**
-	* Add all form input checks
-	*
-	*/
+    var FormSaveReminderRemoveCheck = function (){
+        window.onbeforeunload = null;
+    };
 
-	// exclude the save submit buttons from the check
-	$('button[type="submit"],input[type="submit"],button[id="submit_delete"]').addClass('noWarn');
 
-	// add one time event on all form elements
-   	$('input,textarea,select', 'form ul.Inputfields').one('change',function() {
-		addCheck();
+    /**
+     * submit "save" buttons are exluded
+     */
+    $('button[type="submit"], input[type="submit"], button[id="submit_delete"]')
+        .addClass('noWarn')
+        .click(function() {
+            FormSaveReminder_docheck = false; // we set to false, to surpress tinymce firing onchange and being dirty
+            FormSaveReminderRemoveCheck();
+        // continue saving...
+        });
+
+
+    /**
+    * Add all regular form input checks
+    */
+    $('input, textarea, select', 'form ul.Inputfields').one('change',function() {
+        FormSaveReminderAddCheck();
     });
 
-	// for sortables we check jquery ui sortable event sortupdate
-	$('.ui-sortable').live("sortupdate", function(){
-		console.log("check sortable");
-		addCheck();
-	});
+    /**
+     * For sortables we check jquery ui sortable event sortupdate
+     */
+    $('.ui-sortable').live("sortupdate", function(){
+        // console.log("check sortable");
+        FormSaveReminderAddCheck();
+    });
 
-	// modify PW's JS config data for each TinyMCE instance
-	$(".InputfieldTinyMCE textarea").each(function() {
-		config[this.id].onchange_callback = TinyMCE_change;
-		config[this.id].execommand_callback = TinyMCE_change;
-	});
 
-	$(".InputfieldMyTinyMCE textarea").each(function() {
-		config[this.id].onchange_callback = TinyMCE_change;
-		config[this.id].execommand_callback = TinyMCE_change;
-	});
+    /**
+     * TinyMCE
+     * ------------------------------------------------------------------------
+     */
 
-	// submit "save" buttons are exluded
-   	$('.noWarn').click(function() {
-		docheck = false; // we set to false, to surpress tinymce firing onchange and being dirty
-		removeCheck();
-		// continue saving...
-	});
+
+    // TinyMCE check if content has changed
+    var FormSaveReminder_TinyMCE_change = function(ed) {
+        if(ed.isDirty() && FormSaveReminder_docheck) {
+            // the data changed
+            FormSaveReminderAddCheck();
+        }
+    };
+
+    $(".InputfieldTinyMCE textarea").each(function() {
+        config[this.id].onchange_callback = TinyMCE_change;
+        config[this.id].execommand_callback = TinyMCE_change;
+    });
+
+
+    /**
+     * CKeditor
+     * ------------------------------------------------------------------------
+     */
+
+    var FormSaveReminder_CKeditor_change = function(ed){
+        if(ed.checkDirty() && FormSaveReminder_docheck){
+            FormSaveReminderAddCheck();
+        }
+    };
+
+    var FormSaveReminderAddCKeditorListener = function(){
+        for (var i in CKEDITOR.instances) {
+            CKEDITOR.instances[i].on('change',function() {
+                FormSaveReminder_CKeditor_change(CKEDITOR.instances[i]);
+            });
+        }
+    };
+
+    // first time call, for initially loaded editors
+    FormSaveReminderAddCKeditorListener();
+
+    /**
+     * look for ckeditor inline modes and add event listener
+     * after a mouseover (when PW initializes the inline ckeditor too) but only the first time.
+     * We add a timeout to wait to load all editors on a page
+     */
+    var $FormSaveReminder_CKeditorInlines = $(".InputfieldCKEditorInline[contenteditable=true]");
+    if($FormSaveReminder_CKeditorInlines.size() > 0) {
+        $FormSaveReminder_CKeditorInlines.mouseover(function(e) {
+            if($(this).hasClass("FormSaveReminderLoaded")) return;
+            if($(this).addClass("FormSaveReminderLoaded"));
+            setTimeout(function(){
+                for (var i in CKEDITOR.instances) {
+                    CKEDITOR.instances[i].on('change',function() {
+                        FormSaveReminder_CKeditor_change(CKEDITOR.instances[i]);
+                    });
+                }
+            }, 500);
+        });
+    }
+
+
+
 
 });
 

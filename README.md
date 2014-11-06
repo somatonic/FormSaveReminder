@@ -1,4 +1,4 @@
-# ProcessWire FormSaveReminder 1.0.3
+# ProcessWire FormSaveReminder
 
 This module adds a confirm dialog before leaving a page if its content has changed. Prevents losing unsaved data by accident. It does add this feature to all edit screens in the admin backend by default.
 
@@ -23,14 +23,19 @@ Download [FormSaveReminder](http://modules.processwire.com/modules/form-save-rem
 - In some ocassion it can fail, when there's no change event thrown on an input field, that may even a custom module. However it can usually be fixed simply by adding a `$(element).trigger("change");` to the input textarea, input or select html object.
 - There seems to be some issue with autocomplete page fields when adding items on the fly is enabled. I will look into this later
 
-### update 1.0.3
+### changelog 1.0.4
+- refactored code a bunch to simplify things
+- added support for CKeditor, regular and inline mode
+- made alert message translatable
+
+### changelog 1.0.3
 - fixed issue with delete button throwing the alert
 
-### update 1.0.2
+### changelog 1.0.2
 - fixed issue with script adding (again)
 - updated some texts and documentation
 
-### update 1.0.1
+### changelog 1.0.1
 - fixed issue with script adding
 - fixed subdir installation path
 - added script versioning

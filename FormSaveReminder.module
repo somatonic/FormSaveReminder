@@ -7,7 +7,6 @@
  * @author Philipp 'Soma' Urlich / philipp at urlich.ch
  * @created 2011/09/09
  *
- * last modified 2012/10/31
  * --------------------------------------------------
  *
  * ProcessWire 2.x
@@ -25,7 +24,7 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 	public static function getModuleInfo(){
 		return array(
 			'title' 	=> 'Form Save Reminder',
-			'version' 	=> 103,
+			'version' 	=> 104,
 			'summary' 	=> 'This module adds a confirm dialog before leaving a page if its content has changed. Prevents losing unsaved data by accident.',
 			'href' 		=> 'http://processwire.com/talk/topic/453-formsavereminder/',
 			'singular' 	=> true,
@@ -33,38 +32,63 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 			);
 	}
 
+	static protected $defaults = array(
+		'onPage' => 1,
+		'onTemplate' => 1,
+		'onField' => 1,
+		'onAccess' => 1,
+		'onModule' => 1,
+		);
+
+	public function __construct(){
+		// set defaults options
+		// $this->$key will be set if the module data (json config in db)
+		// has saved values, if not we set the default
+		foreach(self::$defaults as $key => $value){
+			if(!isset($this->$key)) $this->set($key, $value);
+		}
+	}
+
 	public function init(){
-		$requrl = $_SERVER['REQUEST_URI'];
+
+
+	}
+
+	public function ready(){
 
 		// when editing a page
-		if( $this->onPage || !isset($this->onPage) ){
-			if(strpos($requrl, $this->config->urls->admin . 'page/edit/?id=') !== FALSE) {
+		if( $this->onPage ){
+			if($this->page->process == "ProcessPageEdit"){
 				$this->addHookAfter('Process::execute',$this ,'execute');
 			}
 		}
 		// when editing templates, fields, users, roles, permissions, module edit
-		if( $this->onTemplate || !isset($this->onTemplate) ){
-			if(strpos($requrl, $this->config->urls->admin . 'setup/template/edit?id=') !== FALSE){
+		if( $this->onTemplate ){
+			if($this->page->process == "ProcessTemplate"){
 				$this->addHookAfter('Process::executeEdit',$this ,'execute');
 			}
 		}
-		if( $this->onField || !isset($this->onField) ){
-			if(strpos($requrl, $this->config->urls->admin . 'setup/field/edit?id=') !== FALSE){
+		if( $this->onField ){
+			if($this->page->process == "ProcessField"){
+				exit;
 				$this->addHookAfter('Process::executeEdit',$this ,'execute');
 			}
 		}
-		if( $this->onAccess || !isset($this->onAccess) ){
-			if(strpos($requrl, $this->config->urls->admin . 'access/users/edit/?id=') !== FALSE
-			|| strpos($requrl, $this->config->urls->admin . 'access/roles/edit/?id=') !== FALSE
-			|| strpos($requrl, $this->config->urls->admin . 'access/permissions/edit/?id=') !== FALSE){
+		if( $this->onAccess ){
+			if($this->page->process == "ProcessUser"
+				|| $this->page->process == "ProcessRole"
+				|| $this->page->process == "ProcessPermission"){
 				$this->addHookAfter('Process::execute',$this ,'execute');
 			}
 		}
-		if( $this->onModule || !isset($this->onModule) ){
-			if(strpos($requrl, $this->config->urls->admin . 'module/edit?name=') !== FALSE){
+		if( $this->onModule ){
+			// if(strpos($requrl, $this->config->urls->admin . 'module/edit?name=') !== FALSE){
+			if($this->page->process == "ProcessModule"){
 				$this->addHookAfter('Process::executeEdit',$this ,'execute');
 			}
 		}
+
+
 	}
 
 	/**
@@ -73,6 +97,12 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 	 */
 	public function execute(HookEvent $event){
 		$conf = $this->getModuleInfo();
+
+		// add config js vars for javascript
+		$this->config->js("FormSaveReminder", array(
+			"message" => __('Leaving this page will cause any unsaved data to be lost.'),
+			));
+
 	    $this->config->scripts->add($this->config->urls->FormSaveReminder . "FormSaveReminder.js?v={$conf['version']}");
 	}
 
@@ -85,44 +115,46 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 
 		$fields = new InputfieldWrapper();
 
-		if(!isset($data['onPage'])) $data['onPage'] = 1; // default to checked
-		if(!isset($data['onTemplate'])) $data['onTemplate'] = 1;
-		if(!isset($data['onField'])) $data['onField'] = 1;
-		if(!isset($data['onAccess'])) $data['onAccess'] = 1;
-		if(!isset($data['onModule'])) $data['onModule'] = 1;
+		$data = array_merge(self::$defaults, $data);
+
+		// if(!isset($data['onPage'])) $data['onPage'] = 1; // default to checked
+		// if(!isset($data['onTemplate'])) $data['onTemplate'] = 1;
+		// if(!isset($data['onField'])) $data['onField'] = 1;
+		// if(!isset($data['onAccess'])) $data['onAccess'] = 1;
+		// if(!isset($data['onModule'])) $data['onModule'] = 1;
 
 		$field = wire('modules')->get("InputfieldCheckbox");
 		$field->attr('name', 'onPage');
 		$field->attr('value', 1);
-		$field->attr('checked', empty($data['onPage']) ? '' : 'checked');
+		$field->attr('checked', $data['onPage'] ? 'checked' : '');
 		$field->label = "On edit Page?";
 		$fields->append($field);
 
 		$field = wire('modules')->get("InputfieldCheckbox");
 		$field->attr('name', 'onTemplate');
 		$field->attr('value', 1);
-		$field->attr('checked', empty($data['onTemplate']) ? '' : 'checked');
+		$field->attr('checked', $data['onTemplate'] ? 'checked' : '');
 		$field->label = "On edit Template?";
 		$fields->append($field);
 
 		$field = wire('modules')->get("InputfieldCheckbox");
 		$field->attr('name', 'onField');
 		$field->attr('value', 1);
-		$field->attr('checked', empty($data['onField']) ? '' : 'checked');
+		$field->attr('checked', $data['onField'] ? 'checked' : '');
 		$field->label = "On edit Field?";
 		$fields->append($field);
 
 		$field = wire('modules')->get("InputfieldCheckbox");
 		$field->attr('name', 'onAccess');
 		$field->attr('value', 1);
-		$field->attr('checked', empty($data['onAccess']) ? '' : 'checked');
+		$field->attr('checked', $data['onAccess'] ? 'checked' : '');
 		$field->label = "On edit User, Role, Permission?";
 		$fields->append($field);
 
 		$field = wire('modules')->get("InputfieldCheckbox");
 		$field->attr('name', 'onModule');
 		$field->attr('value', 1);
-		$field->attr('checked', empty($data['onModule']) ? '' : 'checked');
+		$field->attr('checked', $data['onModule'] ? 'checked' : '');
 		$field->label = "On edit Module?";
 		$fields->append($field);
 
