@@ -100,6 +100,7 @@ $(function() {
     };
 
     var FormSaveReminderAddCKeditorListener = function(){
+        if(typeof CKEDITOR == "undefined") return;
         for (var i in CKEDITOR.instances) {
             CKEDITOR.instances[i].on('change',function() {
                 FormSaveReminder_CKeditor_change(CKEDITOR.instances[i]);
@@ -118,6 +119,7 @@ $(function() {
     var $FormSaveReminder_CKeditorInlines = $(".InputfieldCKEditorInline[contenteditable=true]");
     if($FormSaveReminder_CKeditorInlines.size() > 0) {
         $FormSaveReminder_CKeditorInlines.mouseover(function(e) {
+            if(typeof CKEDITOR == "undefined") return;
             if($(this).hasClass("FormSaveReminderLoaded")) return;
             if($(this).addClass("FormSaveReminderLoaded"));
             setTimeout(function(){

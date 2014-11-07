@@ -10,7 +10,7 @@ The module has following options to disable Form Save Reminder on certain edit s
 - On edit User, Role, Permission
 - On edit Module
 
-Download [FormSaveReminder](http://modules.processwire.com/modules/form-save-reminder/) from modules directory.
+Download [FormSaveReminder](http://mods.pw/y) from modules directory.
 
 ## How to install:
 

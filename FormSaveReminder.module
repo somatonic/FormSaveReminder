@@ -70,7 +70,6 @@ class FormSaveReminder extends WireData implements Module, ConfigurableModule{
 		}
 		if( $this->onField ){
 			if($this->page->process == "ProcessField"){
-				exit;
 				$this->addHookAfter('Process::executeEdit',$this ,'execute');
 			}
 		}
