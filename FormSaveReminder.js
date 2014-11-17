@@ -83,8 +83,8 @@ $(function() {
     };
 
     $(".InputfieldTinyMCE textarea").each(function() {
-        config[this.id].onchange_callback = TinyMCE_change;
-        config[this.id].execommand_callback = TinyMCE_change;
+        config[this.id].onchange_callback = FormSaveReminder_TinyMCE_change;
+        config[this.id].execommand_callback = FormSaveReminder_TinyMCE_change;
     });
 
 
