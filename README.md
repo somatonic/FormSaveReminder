@@ -23,6 +23,9 @@ Download [FormSaveReminder](http://mods.pw/y) from modules directory.
 - In some ocassion it can fail, when there's no change event thrown on an input field, that may even a custom module. However it can usually be fixed simply by adding a `$(element).trigger("change");` to the input textarea, input or select html object.
 - There seems to be some issue with autocomplete page fields when adding items on the fly is enabled. I will look into this later
 
+### changelog 1.0.6
+- small bug fix for CKEditor in inline mode not getting recognized
+
 ### changelog 1.0.5
 - bug fix naming function
 

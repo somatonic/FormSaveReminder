@@ -116,12 +116,14 @@ $(function() {
      * after a mouseover (when PW initializes the inline ckeditor too) but only the first time.
      * We add a timeout to wait to load all editors on a page
      */
-    var $FormSaveReminder_CKeditorInlines = $(".InputfieldCKEditorInline[contenteditable=true]");
-    if($FormSaveReminder_CKeditorInlines.size() > 0) {
+    // var $FormSaveReminder_CKeditorInlines = $(".InputfieldCKEditorInline[contenteditable=true]");
+    var $FormSaveReminder_CKeditorInlines = $(".InputfieldCKEditorInline");
+
+    if($FormSaveReminder_CKeditorInlines.length > 0) {
         $FormSaveReminder_CKeditorInlines.mouseover(function(e) {
             if(typeof CKEDITOR == "undefined") return;
             if($(this).hasClass("FormSaveReminderLoaded")) return;
-            if($(this).addClass("FormSaveReminderLoaded"));
+            $(this).addClass("FormSaveReminderLoaded");
             setTimeout(function(){
                 for (var i in CKEDITOR.instances) {
                     CKEDITOR.instances[i].on('change',function() {
